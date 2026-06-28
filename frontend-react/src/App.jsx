@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { askFlowise, isConfigured } from './flowise.js'
 
 /* ---- Catalogue (names + categories; images live in /public/assets/products) ---- */
@@ -134,7 +135,7 @@ export default function App() {
                 <div className="bubble">
                   {m.error
                     ? <><span className="err">Couldn't reach the chatbot.</span><br/>Check Flowise is running and your endpoint is set (gear icon).<br/><small style={{ color: 'var(--muted)' }}>{m.text}</small></>
-                    : m.text}
+                    : <ReactMarkdown>{m.text}</ReactMarkdown>}
                 </div>
                 {m.role === 'bot' && !m.error && productsIn(m.text).length > 0 && (
                   <div className="thumbs">

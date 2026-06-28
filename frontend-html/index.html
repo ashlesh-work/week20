@@ -115,8 +115,15 @@
   .col{ max-width:78%; display:flex; flex-direction:column; gap:8px; }
   .msg.user .col{ align-items:flex-end; }
   .bubble{ padding:14px 16px; border-radius:18px; line-height:1.55; font-size:14.5px; box-shadow:var(--shadow-1); white-space:pre-wrap; word-wrap:break-word; }
-  .msg.bot .bubble{ background:var(--surface); border:1px solid var(--brd); border-top-left-radius:6px; }
+  .msg.bot .bubble{ background:var(--surface); border:1px solid var(--brd); border-top-left-radius:6px; white-space:normal; }
   .msg.user .bubble{ background:var(--user-bubble); color:var(--user-fg); border-top-right-radius:6px; }
+  /* Markdown inside bot bubbles */
+  .msg.bot .bubble p{ margin:0 0 .5em; }
+  .msg.bot .bubble p:last-child{ margin-bottom:0; }
+  .msg.bot .bubble strong{ font-weight:600; color:var(--fg); }
+  .msg.bot .bubble ul, .msg.bot .bubble ol{ margin:.4em 0 .6em; padding-left:1.4em; }
+  .msg.bot .bubble li{ margin-bottom:.25em; }
+  .msg.bot .bubble li::marker{ color:var(--gold-2); }
   .typing{ display:inline-flex; gap:5px; align-items:center; }
   .typing span{ width:7px; height:7px; border-radius:50%; background:var(--gold-2); opacity:.6; animation:bounce 1.1s var(--ease) infinite; }
   .typing span:nth-child(2){ animation-delay:.15s; } .typing span:nth-child(3){ animation-delay:.3s; }
@@ -317,13 +324,47 @@
 
   function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+  /* Lightweight markdown→HTML: handles **bold**, *italic*, numbered lists, bullet lists, line breaks */
+  function simpleMarkdown(text){
+    let html = escapeHtml(text);
+    // Bold: **text**
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Italic: *text*
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    // Convert lines into structured HTML
+    const lines = html.split('\n');
+    let out = '', inUl = false, inOl = false;
+    for(const line of lines){
+      const olMatch = line.match(/^\s*(\d+)\.\s+(.*)/);
+      const ulMatch = line.match(/^\s*[-•]\s+(.*)/);
+      if(olMatch){
+        if(!inOl){ if(inUl){ out+='</ul>'; inUl=false; } out+='<ol>'; inOl=true; }
+        out += '<li>'+olMatch[2]+'</li>';
+      } else if(ulMatch){
+        if(!inOl && !inUl){ out+='<ul>'; inUl=true; }
+        else if(inOl){ out+='</ol>'; inOl=false; out+='<ul>'; inUl=true; }
+        out += '<li>'+ulMatch[1]+'</li>';
+      } else {
+        if(inOl){ out+='</ol>'; inOl=false; }
+        if(inUl){ out+='</ul>'; inUl=false; }
+        if(line.trim()==='') out += '<br>';
+        else out += '<p>'+line+'</p>';
+      }
+    }
+    if(inOl) out+='</ol>';
+    if(inUl) out+='</ul>';
+    return out;
+  }
+
   function botAvatar(){ return '<div class="avatar bot"><img src="assets/robot.png" alt="Ornativa assistant"/></div>'; }
 
   function addMessage(role, text, asHtml=false){
     const wrap=document.createElement('div'); wrap.className='msg '+role;
     const col=document.createElement('div'); col.className='col';
     const b=document.createElement('div'); b.className='bubble';
-    if(asHtml){ b.innerHTML=text; } else { b.textContent=text; }
+    if(asHtml){ b.innerHTML=text; }
+    else if(role==='bot'){ b.innerHTML=simpleMarkdown(text); }
+    else { b.textContent=text; }
     col.appendChild(b);
     if(role==='bot' && !asHtml){
       const hits = productsIn(text);
