@@ -1,0 +1,26 @@
+# ─── Secrets / environment (NEVER commit) ───
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# ─── Flowise local data: DB, encrypted credentials, FAISS index ───
+# This is where the OpenAI key lives (encrypted). Never commit it.
+.flowise/
+flowise_data/
+**/faiss.index
+**/docstore.json
+
+# ─── Node / build artifacts ───
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+
+# ─── OS / editor ───
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ornativa Jewels — Virtual Jewellery Expert</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+  // ---- Theme: three-way Dark / Light / System, no flash-of-wrong-theme ----
+  (function () {
+    const saved = localStorage.getItem('ornativa-theme') || 'system';
+    const apply = (mode) => {
+      const sys = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = (mode === 'system') ? sys : mode;
+      document.documentElement.dataset.themeChoice = mode;
+    };
+    apply(saved);
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if ((localStorage.getItem('ornativa-theme') || 'system') === 'system') apply('system');
+    });
+    window.setTheme = (m) => { localStorage.setItem('ornativa-theme', m); apply(m); window.dispatchEvent(new Event('theme-updated')); };
+  })();
+</script>
+<style>
+  :root{
+    --gold-1:#E8C66B; --gold-2:#C99A3A; --gold-3:#B8860B;
+    --radius:24px; --maxw:880px;
+    --shadow-1:0 1px 2px rgba(0,0,0,.18), 0 8px 24px rgba(0,0,0,.16);
+    --shadow-2:0 18px 48px rgba(0,0,0,.28);
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0C0E14; --bg-2:#10131D; --surface:#171C2A; --surface-2:#1E2434;
+    --glass:rgba(20,24,36,.55); --glass-brd:rgba(255,255,255,.09);
+    --fg:#ECEAE3; --muted:#9AA0AE; --brd:rgba(255,255,255,.08);
+    --user-bubble:linear-gradient(135deg,#3a2f17,#241d10); --user-fg:#F6E9C7;
+    --glow:rgba(212,175,55,.30); --blob-a:rgba(201,154,58,.28); --blob-b:rgba(74,93,140,.26); --blob-c:rgba(120,80,160,.18);
+    --scrim:rgba(8,9,14,.6);
+  }
+  :root[data-theme="light"]{
+    --bg:#F6F3EC; --bg-2:#FBFAF6; --surface:#FFFFFF; --surface-2:#F3F0E8;
+    --glass:rgba(255,255,255,.62); --glass-brd:rgba(20,20,30,.08);
+    --fg:#1B1B24; --muted:#6B6F7A; --brd:rgba(20,20,30,.08);
+    --user-bubble:linear-gradient(135deg,#FBEFCB,#F2DFA6); --user-fg:#4A3A12;
+    --glow:rgba(184,134,11,.22); --blob-a:rgba(201,154,58,.20); --blob-b:rgba(120,140,200,.18); --blob-c:rgba(150,120,190,.14);
+    --scrim:rgba(40,38,30,.35);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+    transition:background-color .4s var(--ease), color .4s var(--ease);
+  }
+  .ambient{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .blob{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.9; mix-blend-mode:screen; animation:drift 22s var(--ease) infinite alternate; }
+  :root[data-theme="light"] .blob{ mix-blend-mode:multiply; filter:blur(80px); }
+  .blob.a{ width:46vw; height:46vw; background:var(--blob-a); top:-10vh; left:-8vw; }
+  .blob.b{ width:42vw; height:42vw; background:var(--blob-b); bottom:-14vh; right:-6vw; animation-delay:-7s; animation-duration:26s; }
+  .blob.c{ width:34vw; height:34vw; background:var(--blob-c); top:30vh; left:40vw; animation-delay:-12s; animation-duration:30s; }
+  @keyframes drift{ 0%{transform:translate(0,0) scale(1);} 50%{transform:translate(4vw,3vh) scale(1.12);} 100%{transform:translate(-3vw,-2vh) scale(1.05);} }
+  .grain{ position:absolute; inset:0; opacity:.04; background-image:radial-gradient(var(--fg) 1px,transparent 1px); background-size:4px 4px; }
+
+  .app{ position:relative; z-index:1; height:100dvh; display:flex; flex-direction:column; align-items:center; }
+  header{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px clamp(16px,4vw,40px);
+    background:var(--glass); -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%);
+    border-bottom:1px solid var(--glass-brd); position:sticky; top:0; }
+  .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .mark{ width:42px; height:42px; border-radius:13px; display:grid; place-items:center; flex:none; overflow:hidden;
+    background:linear-gradient(135deg,var(--gold-1),var(--gold-3)); box-shadow:0 6px 20px var(--glow); animation:floaty 6s var(--ease) infinite alternate; }
+  @keyframes floaty{ from{transform:translateY(0) rotate(0);} to{transform:translateY(-4px) rotate(-2deg);} }
+  .mark img{ width:100%; height:100%; object-fit:cover; }
+  .wordmark{ font-family:'Cormorant Garamond',serif; font-weight:700; font-size:clamp(20px,2.6vw,26px); line-height:1; letter-spacing:.3px;
+    background:linear-gradient(100deg,var(--gold-1),var(--fg) 45%,var(--gold-2)); background-size:200% auto; -webkit-background-clip:text; background-clip:text; color:transparent; animation:shimmer 7s linear infinite; }
+  @keyframes shimmer{ to{ background-position:200% center; } }
+  .subtitle{ font-size:12px; color:var(--muted); margin-top:3px; letter-spacing:.4px; }
+  .tools{ display:flex; align-items:center; gap:8px; }
+  .icon-btn{ height:40px; min-width:40px; padding:0 12px; border-radius:12px; border:1px solid var(--brd); background:var(--surface); color:var(--fg); cursor:pointer; display:inline-flex; align-items:center; gap:7px; font-size:13px; font-family:inherit;
+    transition:transform .18s var(--ease), box-shadow .18s var(--ease), background-color .3s var(--ease); }
+  .icon-btn:hover{ transform:translateY(-2px); box-shadow:var(--shadow-1); }
+  .icon-btn:focus-visible{ outline:2px solid var(--gold-2); outline-offset:2px; }
+  .icon-btn svg{ width:18px; height:18px; }
+  .icon-btn .lbl{ font-weight:500; }
+  @media (max-width:620px){ .icon-btn .lbl{ display:none; } }
+  .seg{ display:inline-flex; background:var(--surface-2); border-radius:12px; padding:3px; border:1px solid var(--brd); }
+  .seg button{ border:none; background:transparent; color:var(--muted); height:32px; width:36px; border-radius:9px; cursor:pointer; display:grid; place-items:center; transition:all .2s var(--ease); }
+  .seg button[aria-pressed="true"]{ background:var(--surface); color:var(--gold-2); box-shadow:var(--shadow-1); }
+  .seg button svg{ width:16px; height:16px; }
+
+  main{ width:100%; max-width:var(--maxw); flex:1; overflow-y:auto; padding:26px clamp(16px,4vw,32px) 8px; scroll-behavior:smooth; }
+
+  /* ---- Hero with image ---- */
+  .hero{ text-align:center; margin:3vh auto 4vh; max-width:600px; animation:rise .7s var(--ease) both; }
+  .hero-figure{ position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--glass-brd); box-shadow:var(--shadow-2); margin-bottom:22px; animation:floaty 7s var(--ease) infinite alternate; }
+  .hero-figure img{ width:100%; display:block; }
+  .hero-figure::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 55%, rgba(0,0,0,.04)); pointer-events:none; }
+  :root[data-theme="dark"] .hero-figure img{ filter:brightness(.96) contrast(1.02); }
+  .hero h1{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:clamp(30px,5vw,46px); margin:0 0 10px; line-height:1.06; }
+  .hero p{ color:var(--muted); margin:0 0 22px; font-size:15px; line-height:1.6; }
+  .chips{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .chip{ border:1px solid var(--brd); background:var(--surface); color:var(--fg); border-radius:999px; padding:10px 16px; font-size:13.5px; cursor:pointer; transition:transform .18s var(--ease), box-shadow .18s var(--ease), border-color .2s; }
+  .chip:hover{ transform:translateY(-2px); box-shadow:var(--shadow-1); border-color:var(--gold-2); }
+  .chip:focus-visible{ outline:2px solid var(--gold-2); outline-offset:2px; }
+  .chip.gold{ background:linear-gradient(135deg,var(--gold-1),var(--gold-3)); color:#241d10; border:none; font-weight:600; }
+
+  .msg{ display:flex; gap:12px; margin:18px 0; animation:rise .45s var(--ease) both; }
+  .msg.user{ flex-direction:row-reverse; }
+  .avatar{ width:36px; height:36px; border-radius:12px; flex:none; display:grid; place-items:center; font-size:12px; font-weight:600; overflow:hidden; }
+  .avatar.bot{ background:#fff; box-shadow:var(--shadow-1); }
+  .avatar.bot img{ width:100%; height:100%; object-fit:cover; }
+  .avatar.user{ background:var(--surface-2); color:var(--fg); border:1px solid var(--brd); }
+  .col{ max-width:78%; display:flex; flex-direction:column; gap:8px; }
+  .msg.user .col{ align-items:flex-end; }
+  .bubble{ padding:14px 16px; border-radius:18px; line-height:1.55; font-size:14.5px; box-shadow:var(--shadow-1); white-space:pre-wrap; word-wrap:break-word; }
+  .msg.bot .bubble{ background:var(--surface); border:1px solid var(--brd); border-top-left-radius:6px; }
+  .msg.user .bubble{ background:var(--user-bubble); color:var(--user-fg); border-top-right-radius:6px; }
+  .typing{ display:inline-flex; gap:5px; align-items:center; }
+  .typing span{ width:7px; height:7px; border-radius:50%; background:var(--gold-2); opacity:.6; animation:bounce 1.1s var(--ease) infinite; }
+  .typing span:nth-child(2){ animation-delay:.15s; } .typing span:nth-child(3){ animation-delay:.3s; }
+  @keyframes bounce{ 0%,60%,100%{ transform:translateY(0); opacity:.4; } 30%{ transform:translateY(-5px); opacity:1; } }
+  .err{ color:#E66; font-size:13px; }
+
+  /* ---- Inline product thumbnails under a bot reply ---- */
+  .thumbs{ display:flex; flex-wrap:wrap; gap:10px; }
+  .thumb{ display:flex; align-items:center; gap:9px; padding:7px 12px 7px 7px; border-radius:14px; background:var(--surface); color:var(--fg); border:1px solid var(--brd); cursor:pointer; transition:transform .18s var(--ease), box-shadow .18s var(--ease), border-color .2s; }
+  .thumb:hover{ transform:translateY(-2px); box-shadow:var(--shadow-1); border-color:var(--gold-2); }
+  .thumb img{ width:38px; height:38px; border-radius:9px; object-fit:cover; background:#fff; }
+  .thumb .nm{ font-size:12.5px; font-weight:500; }
+
+  /* ---- Composer ---- */
+  .dock{ width:100%; max-width:var(--maxw); padding:10px clamp(16px,4vw,32px) 22px; }
+  .composer{ display:flex; align-items:flex-end; gap:10px; padding:8px 8px 8px 16px; border-radius:20px;
+    background:var(--glass); -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%);
+    border:1px solid var(--glass-brd); box-shadow:var(--shadow-2); }
+  .composer textarea{ flex:1; border:none; background:transparent; color:var(--fg); resize:none; font-family:inherit; font-size:15px; line-height:1.5; max-height:140px; padding:9px 0; outline:none; }
+  .composer textarea::placeholder{ color:var(--muted); }
+  .send{ width:46px; height:46px; flex:none; border:none; border-radius:14px; cursor:pointer; display:grid; place-items:center;
+    background:linear-gradient(135deg,var(--gold-1),var(--gold-3)); color:#241d10; box-shadow:0 8px 22px var(--glow); transition:transform .18s var(--ease), filter .2s; }
+  .send:hover{ transform:translateY(-2px) scale(1.03); } .send:active{ transform:scale(.96); }
+  .send:disabled{ filter:grayscale(.5) opacity(.6); cursor:not-allowed; transform:none; }
+  .send svg{ width:20px; height:20px; }
+  .hint{ text-align:center; color:var(--muted); font-size:11.5px; margin-top:10px; }
+
+  /* ---- Modal / Drawer ---- */
+  .scrim{ position:fixed; inset:0; background:var(--scrim); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); z-index:50; display:grid; place-items:center; opacity:0; pointer-events:none; transition:opacity .3s var(--ease); }
+  .scrim.open{ opacity:1; pointer-events:auto; }
+  .modal{ width:min(520px,92vw); background:var(--surface); border:1px solid var(--brd); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow-2); transform:translateY(10px) scale(.98); transition:transform .35s var(--ease); }
+  .scrim.open .modal{ transform:none; }
+  .modal h2{ font-family:'Cormorant Garamond',serif; margin:0 0 6px; font-size:24px; }
+  .modal p{ color:var(--muted); font-size:13.5px; margin:0 0 18px; line-height:1.5; }
+  .field label{ display:block; font-size:12.5px; color:var(--muted); margin-bottom:6px; }
+  .field input{ width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--brd); background:var(--bg-2); color:var(--fg); font-size:14px; font-family:inherit; outline:none; }
+  .field input:focus-visible{ border-color:var(--gold-2); outline:2px solid var(--glow); }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
+  .btn-primary{ background:linear-gradient(135deg,var(--gold-1),var(--gold-3)); color:#241d10; border:none; padding:11px 20px; border-radius:12px; font-weight:600; cursor:pointer; transition:transform .18s var(--ease); }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-ghost{ background:transparent; color:var(--fg); border:1px solid var(--brd); padding:11px 18px; border-radius:12px; cursor:pointer; }
+  .note{ font-size:12px; color:var(--muted); margin-top:14px; padding:10px 12px; border:1px dashed var(--brd); border-radius:10px; }
+
+  /* ---- Collection drawer ---- */
+  .drawer{ width:min(720px,94vw); max-height:86vh; overflow-y:auto; background:var(--surface); border:1px solid var(--brd); border-radius:var(--radius); padding:24px clamp(16px,3vw,28px); box-shadow:var(--shadow-2); transform:translateY(14px) scale(.98); transition:transform .35s var(--ease); }
+  .scrim.open .drawer{ transform:none; }
+  .drawer-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .drawer-head h2{ font-family:'Cormorant Garamond',serif; margin:0; font-size:26px; }
+  .drawer-head p{ color:var(--muted); font-size:13px; margin:2px 0 18px; }
+  .gallery{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:14px; }
+  .pcard{ border:1px solid var(--brd); background:var(--bg-2); color:var(--fg); border-radius:16px; padding:12px; cursor:pointer; text-align:center; transition:transform .18s var(--ease), box-shadow .2s, border-color .2s; }
+  .pcard:hover{ transform:translateY(-3px); box-shadow:var(--shadow-1); border-color:var(--gold-2); }
+  .pcard img{ width:100%; aspect-ratio:1; object-fit:cover; border-radius:11px; background:#fff; }
+  .pcard .nm{ font-size:13px; font-weight:600; margin-top:9px; }
+  .pcard .cat{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .pcard.is-oos img{ filter:grayscale(.7) opacity(.5); }
+  .badge-oos{ display:inline-block; margin-top:8px; font-size:10.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:#C0392B; background:rgba(192,57,43,.12); border:1px solid rgba(192,57,43,.32); padding:3px 9px; border-radius:999px; }
+  .x{ width:34px; height:34px; border-radius:10px; border:1px solid var(--brd); background:var(--bg-2); color:var(--fg); cursor:pointer; font-size:16px; line-height:1; }
+
+  @keyframes rise{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+  main::-webkit-scrollbar{ width:9px; } main::-webkit-scrollbar-thumb{ background:var(--brd); border-radius:9px; }
+  @media (max-width:560px){ .subtitle{ display:none; } .col{ max-width:84%; } }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+    .blob{ opacity:.5; }
+  }
+</style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
+    <div class="grain"></div>
+  </div>
+
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="mark" aria-hidden="true"><img src="assets/robot.png" alt="" /></div>
+        <div>
+          <div class="wordmark">Ornativa Jewels</div>
+          <div class="subtitle">Virtual Jewellery Expert · Hyderabad</div>
+        </div>
+      </div>
+      <div class="tools">
+        <button class="icon-btn" onclick="openGallery()" aria-label="Browse the collection" title="Browse the collection">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span class="lbl">Collection</span>
+        </button>
+        <div class="seg" role="group" aria-label="Theme">
+          <button id="t-light" onclick="setTheme('light')" aria-pressed="false" title="Light" aria-label="Light theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg>
+          </button>
+          <button id="t-system" onclick="setTheme('system')" aria-pressed="true" title="System" aria-label="System theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </button>
+          <button id="t-dark" onclick="setTheme('dark')" aria-pressed="false" title="Dark" aria-label="Dark theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" onclick="openSettings()" aria-label="Settings" title="Connection settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2 2 2 0 1 1-4 0 1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="thread" aria-live="polite">
+      <section class="hero" id="hero">
+        <figure class="hero-figure"><img src="assets/hero.png" alt="Ornativa virtual assistant beside a jewellery display" /></figure>
+        <h1>Discover your perfect piece</h1>
+        <p>Meet your Ornativa jewellery expert. Ask about prices, materials, availability, or recommendations — every answer comes straight from our live catalogue.</p>
+        <div class="chips">
+          <button class="chip gold" onclick="openGallery()">✦ Browse the collection</button>
+          <button class="chip" onclick="quick(this)">List all available diamond items</button>
+          <button class="chip" onclick="quick(this)">What is the price of the Pearl Necklace?</button>
+          <button class="chip" onclick="quick(this)">Which products are made of 22K gold?</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="dock">
+      <form class="composer" id="form" autocomplete="off">
+        <textarea id="input" rows="1" placeholder="Ask about our jewellery…" aria-label="Your message"></textarea>
+        <button class="send" id="send" type="submit" aria-label="Send message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </form>
+      <div class="hint">Ornativa answers from the catalogue only · <strong>Enter</strong> to send, <strong>Shift+Enter</strong> for a new line</div>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="scrim" id="scrim" onclick="if(event.target===this)closeSettings()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="set-title">
+      <h2 id="set-title">Connection settings</h2>
+      <p>Paste your Flowise <strong>Prediction API</strong> endpoint for the Ornativa chatflow. Stored only in this browser — never sent anywhere else.</p>
+      <div class="field">
+        <label for="endpoint">Flowise prediction endpoint</label>
+        <input id="endpoint" type="url" spellcheck="false" placeholder="http://localhost:3000/api/v1/prediction/YOUR-CHATFLOW-ID" />
+      </div>
+      <div class="note">🔒 No API keys live here. Your OpenAI key stays inside Flowise (Credentials), never in this page or the repo.</div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeSettings()">Cancel</button>
+        <button class="btn-primary" onclick="saveSettings()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collection drawer -->
+  <div class="scrim" id="gallery-scrim" onclick="if(event.target===this)closeGallery()">
+    <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="gal-title">
+      <div class="drawer-head">
+        <div>
+          <h2 id="gal-title">The Ornativa Collection</h2>
+          <p>Tap any piece to ask about it.</p>
+        </div>
+        <button class="x" onclick="closeGallery()" aria-label="Close collection">✕</button>
+      </div>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </div>
+
+<script>
+  // ---- Catalogue (names + categories; images by ProductID) ----
+  const PRODUCTS = [
+    { id:'R101', name:'Classic Diamond Ring',     cat:'Ring' },
+    { id:'R102', name:'Ruby Solitaire Ring',      cat:'Ring', oos:true },
+    { id:'N201', name:'Pearl Necklace',           cat:'Necklace' },
+    { id:'N202', name:'Emerald Choker',           cat:'Necklace' },
+    { id:'E301', name:'Daily Wear Gold Earrings', cat:'Earrings' },
+    { id:'E302', name:'Diamond Stud Earrings',    cat:'Earrings' },
+    { id:'B401', name:'Gold Chain Bracelet',      cat:'Bracelet' },
+    { id:'B402', name:'Emerald Cuff Bracelet',    cat:'Bracelet', oos:true },
+    { id:'P501', name:'Lotus Pendant',            cat:'Pendant' },
+    { id:'P502', name:'Om Symbol Pendant',        cat:'Pendant' },
+  ];
+  const imgOf = (p) => `assets/products/${p.id}.png`;
+  // Presentation only: find catalogue products mentioned in a bot reply (does NOT alter the answer text).
+  const productsIn = (text) => { const t=(text||'').toLowerCase(); return PRODUCTS.filter(p=>t.includes(p.name.toLowerCase())); };
+
+  function syncThemeButtons(){
+    const choice = document.documentElement.dataset.themeChoice || 'system';
+    ['light','system','dark'].forEach(m=>{ const b=document.getElementById('t-'+m); if(b) b.setAttribute('aria-pressed', String(m===choice)); });
+  }
+  syncThemeButtons(); window.addEventListener('theme-updated', syncThemeButtons);
+
+  // ---- Session + endpoint (no secrets) ----
+  const DEFAULT_ENDPOINT = 'http://localhost:3000/api/v1/prediction/YOUR-CHATFLOW-ID';
+  const sessionId = localStorage.getItem('ornativa-sid') || (crypto.randomUUID ? crypto.randomUUID() : 'sid-'+Date.now());
+  localStorage.setItem('ornativa-sid', sessionId);
+  const getEndpoint = () => localStorage.getItem('ornativa-endpoint') || DEFAULT_ENDPOINT;
+
+  const thread = document.getElementById('thread');
+  const hero = document.getElementById('hero');
+  const input = document.getElementById('input');
+  const form = document.getElementById('form');
+  const sendBtn = document.getElementById('send');
+
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function botAvatar(){ return '<div class="avatar bot"><img src="assets/robot.png" alt="Ornativa assistant"/></div>'; }
+
+  function addMessage(role, text, asHtml=false){
+    const wrap=document.createElement('div'); wrap.className='msg '+role;
+    const col=document.createElement('div'); col.className='col';
+    const b=document.createElement('div'); b.className='bubble';
+    if(asHtml){ b.innerHTML=text; } else { b.textContent=text; }
+    col.appendChild(b);
+    if(role==='bot' && !asHtml){
+      const hits = productsIn(text);
+      if(hits.length){
+        const row=document.createElement('div'); row.className='thumbs';
+        hits.forEach(p=>{
+          const t=document.createElement('button'); t.className='thumb'; t.type='button';
+          t.innerHTML=`<img src="${imgOf(p)}" alt=""><span class="nm">${p.name}</span>`;
+          t.onclick=()=>submit('Tell me about the '+p.name);
+          row.appendChild(t);
+        });
+        col.appendChild(row);
+      }
+    }
+    if(role==='bot'){ wrap.innerHTML=botAvatar(); } else { wrap.innerHTML='<div class="avatar user">You</div>'; }
+    wrap.appendChild(col); thread.appendChild(wrap);
+    thread.scrollTop=thread.scrollHeight; return b;
+  }
+
+  function showTyping(){
+    const wrap=document.createElement('div'); wrap.className='msg bot'; wrap.id='typing-row';
+    wrap.innerHTML=botAvatar()+'<div class="col"><div class="bubble"><span class="typing"><span></span><span></span><span></span></span></div></div>';
+    thread.appendChild(wrap); thread.scrollTop=thread.scrollHeight;
+  }
+  function removeTyping(){ const t=document.getElementById('typing-row'); if(t) t.remove(); }
+
+  async function askFlowise(question){
+    const res = await fetch(getEndpoint(), { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ question, overrideConfig:{ sessionId } }) });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    return data.text ?? data.answer ?? (typeof data==='string'? data : JSON.stringify(data));
+  }
+
+  async function submit(text){
+    if(!text.trim()) return;
+    if(hero){ hero.style.display='none'; }
+    addMessage('user', text);
+    input.value=''; input.style.height='auto'; sendBtn.disabled=true;
+    showTyping();
+    try{
+      const answer = await askFlowise(text);
+      removeTyping(); addMessage('bot', answer);
+    }catch(err){
+      removeTyping();
+      const b=addMessage('bot','', true);
+      b.innerHTML = '<span class="err">Couldn\'t reach the chatbot.</span><br>Check that Flowise is running and your endpoint is set (gear icon, top-right).<br><small style="color:var(--muted)">'+escapeHtml(String(err.message||err))+'</small>';
+    }finally{ sendBtn.disabled=false; input.focus(); }
+  }
+
+  form.addEventListener('submit', e=>{ e.preventDefault(); submit(input.value); });
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); submit(input.value); } });
+  input.addEventListener('input', ()=>{ input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,140)+'px'; });
+  window.quick = (el)=> submit(el.textContent);
+
+  // ---- Collection drawer ----
+  const gal=document.getElementById('gallery'); const galScrim=document.getElementById('gallery-scrim');
+  PRODUCTS.forEach(p=>{
+    const c=document.createElement('button'); c.className='pcard'+(p.oos?' is-oos':''); c.type='button';
+    c.innerHTML=`<img src="${imgOf(p)}" alt="${p.name}"><div class="nm">${p.name}</div><div class="cat">${p.cat}</div>`+(p.oos?'<div class="badge-oos">Out of stock</div>':'');
+    c.onclick=()=>{ closeGallery(); submit('Tell me about the '+p.name); };
+    gal.appendChild(c);
+  });
+  window.openGallery=()=> galScrim.classList.add('open');
+  window.closeGallery=()=> galScrim.classList.remove('open');
+
+  // ---- Settings ----
+  const scrim=document.getElementById('scrim'); const epInput=document.getElementById('endpoint');
+  window.openSettings=()=>{ epInput.value=localStorage.getItem('ornativa-endpoint')||''; scrim.classList.add('open'); epInput.focus(); };
+  window.closeSettings=()=> scrim.classList.remove('open');
+  window.saveSettings=()=>{ const v=epInput.value.trim(); if(v) localStorage.setItem('ornativa-endpoint', v); closeSettings(); };
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeSettings(); closeGallery(); } });
+
+  if(!localStorage.getItem('ornativa-endpoint')){
+    setTimeout(()=> addMessage('bot','Welcome to Ornativa Jewels. ✨ Before we begin, set your Flowise endpoint via the gear icon (top-right) so I can connect to the catalogue. Then ask me anything — or tap “Browse the collection”.'), 400);
+  }
+</script>
+</body>
+</html>

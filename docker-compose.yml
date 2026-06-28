@@ -1,0 +1,45 @@
+# Ornativa Jewels — full demo stack: Flowise + both frontends.
+# Run:  docker compose up -d   →  Flowise http://localhost:3000
+#                                  HTML UI  http://localhost:8080
+#                                  React UI http://localhost:8081
+#
+# SECRETS POLICY: there are NO API keys in this file or in any image layer.
+# Add your OpenAI key inside the Flowise UI (Credentials) at runtime; it is
+# encrypted into the flowise_data volume on YOUR machine only.
+
+services:
+  flowise:
+    image: flowiseai/flowise:latest
+    container_name: ornativa-flowise
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - CORS_ORIGINS=*          # allows the frontends (8080/8081) to call the Prediction API
+      # NO API KEYS HERE. OpenAI key is entered in Flowise UI > Credentials.
+    volumes:
+      # Persists the Flowise DB, encrypted credentials, AND the FAISS index.
+      # In the Faiss node, set Base Path to: /root/.flowise/faiss
+      - flowise_data:/root/.flowise
+
+  frontend-html:
+    build: ./frontend-html
+    container_name: ornativa-frontend-html
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - flowise
+
+  frontend-react:
+    build: ./frontend-react
+    container_name: ornativa-frontend-react
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    depends_on:
+      - flowise
+
+volumes:
+  flowise_data:
