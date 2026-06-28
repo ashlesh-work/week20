@@ -1,7 +1,7 @@
 // Calls the Flowise Prediction API. Holds NO secrets — only the endpoint URL.
 // Endpoint precedence: localStorage override (set in Settings) > build-time env > placeholder.
 const ENV_ENDPOINT = import.meta.env.VITE_FLOWISE_ENDPOINT || ''
-const PLACEHOLDER = 'http://localhost:3000/api/v1/prediction/YOUR-CHATFLOW-ID'
+const PLACEHOLDER = 'http://localhost:3121/api/v1/prediction/YOUR-CHATFLOW-ID'
 
 export const getEndpoint = () =>
   localStorage.getItem('ornativa-endpoint') || ENV_ENDPOINT || PLACEHOLDER

@@ -169,7 +169,7 @@ export default function App() {
           <p>Paste your Flowise <strong>Prediction API</strong> endpoint for the Ornativa chatflow. Stored only in this browser.</p>
           <div className="field">
             <label htmlFor="endpoint">Flowise prediction endpoint</label>
-            <input id="endpoint" type="url" spellCheck="false" value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="http://localhost:3000/api/v1/prediction/YOUR-CHATFLOW-ID" />
+            <input id="endpoint" type="url" spellCheck="false" value={endpoint} onChange={(e) => setEndpoint(e.target.value)} placeholder="http://localhost:3121/api/v1/prediction/YOUR-CHATFLOW-ID" />
           </div>
           <div className="note">🔒 No API keys here. Your OpenAI key stays inside Flowise (Credentials) — never in this page or the repo.</div>
           <div className="modal-actions">

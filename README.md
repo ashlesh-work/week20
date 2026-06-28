@@ -41,7 +41,7 @@ docker compose up -d
 ```
 | Service | URL |
 |---|---|
-| Flowise (build the flow here) | http://localhost:3000 |
+| Flowise (build the flow here) | http://localhost:3121 |
 | Animated UI — HTML version | http://localhost:8080 |
 | Animated UI — React version | http://localhost:8081 |
 

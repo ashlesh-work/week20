@@ -1,5 +1,5 @@
 # Ornativa Jewels — full demo stack: Flowise + both frontends.
-# Run:  docker compose up -d   →  Flowise http://localhost:3000
+# Run:  docker compose up -d   →  Flowise http://localhost:3121
 #                                  HTML UI  http://localhost:8080
 #                                  React UI http://localhost:8081
 #
@@ -13,9 +13,9 @@ services:
     container_name: ornativa-flowise
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3121:3121"
     environment:
-      - PORT=3000
+      - PORT=3121
       - CORS_ORIGINS=*          # allows the frontends (8080/8081) to call the Prediction API
       # NO API KEYS HERE. OpenAI key is entered in Flowise UI > Credentials.
     volumes:

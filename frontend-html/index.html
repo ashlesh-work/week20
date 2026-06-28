@@ -255,7 +255,7 @@
       <p>Paste your Flowise <strong>Prediction API</strong> endpoint for the Ornativa chatflow. Stored only in this browser — never sent anywhere else.</p>
       <div class="field">
         <label for="endpoint">Flowise prediction endpoint</label>
-        <input id="endpoint" type="url" spellcheck="false" placeholder="http://localhost:3000/api/v1/prediction/YOUR-CHATFLOW-ID" />
+        <input id="endpoint" type="url" spellcheck="false" placeholder="http://localhost:3121/api/v1/prediction/YOUR-CHATFLOW-ID" />
       </div>
       <div class="note">🔒 No API keys live here. Your OpenAI key stays inside Flowise (Credentials), never in this page or the repo.</div>
       <div class="modal-actions">
@@ -304,7 +304,7 @@
   syncThemeButtons(); window.addEventListener('theme-updated', syncThemeButtons);
 
   // ---- Session + endpoint (no secrets) ----
-  const DEFAULT_ENDPOINT = 'http://localhost:3000/api/v1/prediction/YOUR-CHATFLOW-ID';
+  const DEFAULT_ENDPOINT = 'http://localhost:3121/api/v1/prediction/YOUR-CHATFLOW-ID';
   const sessionId = localStorage.getItem('ornativa-sid') || (crypto.randomUUID ? crypto.randomUUID() : 'sid-'+Date.now());
   localStorage.setItem('ornativa-sid', sessionId);
   const getEndpoint = () => localStorage.getItem('ornativa-endpoint') || DEFAULT_ENDPOINT;
