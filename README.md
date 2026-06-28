@@ -42,8 +42,8 @@ docker compose up -d
 | Service | URL |
 |---|---|
 | Flowise (build the flow here) | http://localhost:3121 |
-| Animated UI — HTML version | http://localhost:8080 |
-| Animated UI — React version | http://localhost:8081 |
+| Animated UI — HTML version | http://localhost:3122 |
+| Animated UI — React version | http://localhost:3123 |
 
 Then: **(1)** in Flowise add your OpenAI key under *Credentials*, **(2)** build the flow (below) and click **Upsert Vector Database**, **(3)** copy the chatflow's **Prediction API** URL into either frontend via the ⚙️ gear icon.
 
